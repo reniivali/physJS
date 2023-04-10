@@ -1,3 +1,9 @@
+@font-face {
+	font-family: 'Fira Code';
+	font-style: normal;
+	src: url("firaCode.ttf") format("truetype");
+}
+
 body {
 	background: #1e1e2e;
 	overflow: hidden;
@@ -19,4 +25,121 @@ body {
 
 .box > div > * {
 	margin: 0;
+}
+
+#borderRadDemo {
+	height: 200px;
+	width: 200px;
+	background-color: #11111b;
+	border: 3px solid #ecbebe;
+	border-radius: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	transition: none;
+}
+
+#boxShadowDemo {
+	height: 200px;
+	width: 200px;
+	background-color: #11111b;
+	border: 3px solid #ecbebe;
+	border-radius: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	transition: none;
+}
+
+.demo {
+	background-color: #181825;
+	border: 3px solid #45475a;
+	border-radius: 10px;
+	transition: background-color .2s, border .2s;
+}
+
+.demo:hover {
+	background-color: #11111b;
+	border: 3px solid #ecbebe;
+}
+
+#flexDemoContainer {
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	overflow-x: auto;
+}
+
+.flexDemo {
+	flex-grow: 1;
+	flex-shrink: 1;
+	margin: 10px;
+	height: fit-content;
+	vertical-align: middle;
+}
+
+.flexDemo h1 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.flexDemo p {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.flexBox {
+	flex-basis: auto;
+	flex-grow: 1;
+	flex-shrink: 1;
+	margin: 10px;
+	height: fit-content;
+}
+
+.flexBox h2 {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.slider::-webkit-slider-thumb, .slider::-moz-range-thumb{
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 10px;
+	height: 10px;
+	border-radius: 20px;
+	background: #1e1e2e;
+	border-color: #f5c2e7;
+	cursor: pointer;
+}
+
+.slider {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	height: 5px;
+	border-radius: 5px;
+	background: #45475a;
+	outline: none;
+}
+
+select {
+	background-color: #1e1e2e;
+	border: 3px solid #45475a;
+	border-radius: 5px;
+	color: #cdd6f4;
+	font-family: 'Fira Code', monospace;
+	padding: 5px;
+	margin: 0 5px 10px 0;
+	transition: all .2s;
+}
+
+button {
+	background-color: #1e1e2e;
+	border: 3px solid #45475a;
+	border-radius: 5px;
+	color: #cdd6f4;
+	font-family: 'Fira Code', monospace;
+	padding: 5px;
+	margin: 0 5px 10px 0;
+	transition: all .2s;
 }
