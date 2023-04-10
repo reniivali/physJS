@@ -1,0 +1,14 @@
+body {
+	background: #1e1e2e;
+	overflow: hidden;
+}
+
+.box {
+	position: absolute;
+	background-color: #f5c2e7;
+}
+
+.box > div {
+	position: relative;
+	background-color: #11111b;
+}
