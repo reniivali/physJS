@@ -1,26 +1,33 @@
 @font-face {
 	font-family: 'Fira Code';
 	font-style: normal;
-	src: url("firaCode.ttf") format("truetype");
+	src: url("./firacode.ttf") format("truetype");
 }
 
 body {
 	background: #1e1e2e;
 	overflow: hidden;
 	color: #cdd6f4;
+	font-family: 'Fira Code', monospace;
 }
 
 .box {
 	position: absolute;
+	background-color: #45475a;
+	transition: background-color .2s;
+}
+
+.box:hover {
 	background-color: #f5c2e7;
 }
 
 .box > div {
 	position: relative;
 	background-color: #11111b;
-	width: calc(100% - 10px);
-	height: calc(100% - 10px);
+	width: calc(100% - 20px);
+	height: calc(100% - 20px);
 	margin: 5px;
+	padding: 5px;
 }
 
 .box > div > * {
@@ -51,6 +58,19 @@ body {
 	transition: none;
 }
 
+#boxShadowDemoSliders {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+#boxShadowDemoSliders > div {
+	margin: 5px;
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: 100px;
+}
+
 .demo {
 	background-color: #181825;
 	border: 3px solid #45475a;
@@ -68,6 +88,17 @@ body {
 	flex-wrap: nowrap;
 	flex-direction: row;
 	overflow-x: auto;
+}
+
+.flexContainer {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.flexContainer > div {
+	margin: 10px;
+	padding: 10px;
+	width: auto;
 }
 
 .flexDemo {
