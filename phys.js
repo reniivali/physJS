@@ -189,6 +189,9 @@ d.addEventListener('DOMContentLoaded', () => {
 	addCircle(700, 150, 75);
 	addCircle(900, 150, 75);
 	addCircle(1100, 150, 75);
+	addCircle(1300, 150, 75);
+	addCircle(1500, 150, 75);
+	addCircle(1700, 150, 75);
 
 	addBox(w.innerWidth / 2, w.innerHeight + 50, w.innerWidth, 100, 0.5, 1, "", true);
 	addBox(w.innerWidth / 2, -50, w.innerWidth, 100, 0.5, 1, "", true);
@@ -246,7 +249,7 @@ d.addEventListener('DOMContentLoaded', () => {
 					break;
 				// on RMB, pull every object toward the mouse - until it is released
 				case 2:
-					for (let i = 0; i < boxes.length - 4; i++) {
+					for (let i = 3; i < boxes.length - 4; i++) {
 						let dx = explode.x - boxes[i].position.x;
 						let dy = explode.y - boxes[i].position.y;
 						let dz = Math.sqrt(dx * dx + dy * dy);
