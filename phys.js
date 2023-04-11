@@ -147,8 +147,6 @@ d.addEventListener('DOMContentLoaded', () => {
 			els[i].style.top = b.position.y - boxProp[i].h / 2 + 'px';
 			els[i].style.left = b.position.x - boxProp[i].w / 2 + 'px';
 			els[i].style.transform = `rotate(${b.angle}rad)`;
-
-			//if (i === 2) {els[i].style.overflow = 'auto';}
 		}
 
 		if (explode.d) {
@@ -180,6 +178,11 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	w.addEventListener('mousedown', (e) => {
 		explode = {d: true, x: e.clientX, y: e.clientY, b: e.button};
+	});
+
+	w.addEventListener('mousemove', (e) => {
+		explode.x = e.clientX;
+		explode.y = e.clientY;
 	});
 
 	w.addEventListener('mouseup', (e) => {
