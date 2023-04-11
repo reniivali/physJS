@@ -181,13 +181,19 @@ d.addEventListener('DOMContentLoaded', () => {
 
 		if (explode.d) {
 			switch (explode.b) {
+				/*
+				let dz = Math.sqrt(dx * dx + dy * dy)
+let fz = expForce / dz
+let fx = fz * (dx/dz)
+let fy = fz * (dy/dz)*/
 				// on LMB, cause an explosion, but don't allow it to happen every frame until the mouse is released ( it gets weird )
 				case 0:
 					for (let i = 0; i < boxes.length - 4; i++) {
 						let dx = boxes[i].position.x - explode.x;
 						let dy = boxes[i].position.y - explode.y;
-						//console.log(boxes[i].position);
-						let fx = expForce / dx, fy = expForce / dy;
+						let dz = Math.sqrt(dx * dx + dy * dy);
+						let fz = expForce / dz;
+						let fx = fz * (dx / dz), fy = fz * (dy / dz);
 						console.log(`Distance of the mouse from the cube: {X: ${dx}, Y: ${dy}} Applied force to object ${i}: {X: ${fx}, Y: ${fy}}`)
 						if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
 							// noinspection JSCheckFunctionSignatures
@@ -200,7 +206,9 @@ d.addEventListener('DOMContentLoaded', () => {
 					for (let i = 0; i < boxes.length - 4; i++) {
 						let dx = explode.x - boxes[i].position.x;
 						let dy = explode.y - boxes[i].position.y;
-						let fx = expForce / dx, fy = expForce / dy;
+						let dz = Math.sqrt(dx * dx + dy * dy);
+						let fz = expForce / dz;
+						let fx = fz * (dx / dz), fy = fz * (dy / dz);
 						if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
 							// noinspection JSCheckFunctionSignatures
 							Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
