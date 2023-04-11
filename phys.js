@@ -4,7 +4,7 @@ let gravity = 0.75;
 let boxes = [];
 let boxProp = [];
 let explode = false;
-let expForce = 0.01;
+let expForce = 1000;
 const engine = Matter.Engine.create();
 const bodies = Matter.Bodies;
 const runner = Matter.Runner.create();
@@ -37,6 +37,20 @@ function addBox(x, y, w, h, b, m, content, stat) {
 	} else {
 		boxes.push(bodies.rectangle(x, y, w, h, { isStatic: true }));
 	}
+}
+
+function addCircle(x, y, r) {
+	let circle = d.createElement('div');
+	circle.classList.add('box');
+	circle.style.width = r*2 + 'px';
+	circle.style.height = r*2 + 'px';
+	circle.style.left = x + 'px';
+	circle.style.top = y + 'px';
+	circle.style.borderRadius = r + 'px';
+	circle.innerHTML = `<div style="border-radius:${r}px;"><div style="position:relative;background-color:#fab387;top:${r-14}px;left:-5px;width:${r-10}px;height:8px;"></div></div>`
+	d.body.appendChild(circle);
+	boxes.push(bodies.circle(x, y, r))
+	boxProp.push({w: r*2, h: r*2})
 }
 
 let iFlexDemoBoxes = 4;
@@ -129,6 +143,12 @@ d.addEventListener('DOMContentLoaded', () => {
 	addBox(1400, 150, 300, 310, 0.5, 1, "<div class=\"subSection\">\n<h1>Border Radius</h1>\n<div id=\"borderRadDemo\"></div>\n<p id=\"borderRadDemoVal\" style=\"margin-bottom: 0;\">Radius: 5px</p>\n<input type=\"range\" min=\"0\" max=\"100\" value=\"5\" class=\"slider\" id=\"borderRadDemoSlide\">\n</div>", false);
 	addBox(1400, 450, 370, 425, 0.5, 1, "<div class=\"subSection\" id=\"boxShadowDemoContainer\">\n<h1>Box Shadow</h1>\n<div id=\"boxShadowDemo\"></div>\n<div id=\"boxShadowDemoSliders\"></div>\n</div>", false);
 	addBox(510, 400, 1000, 625, 0.5, 1, "<div class=\"subSection\" style=\"overflow:auto;\">\n<h1>Flexbox</h1>\n<div id=\"flexDemoContainer\">\n<div class=\"demo flexDemo\">\n<h1>Box 1</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 2</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 3</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 4</h1>\n</div>\n</div>\n<h2 style=\"margin: 0;\">Container Properties</h2>\n<div class=\"flexContainer\">\n<div class=\"demo flexBox\" style=\"width: 300px;\">\n<h2>Direction</h2>\n<select id=\"flexDirection\">\n<option value=\"row\">Row</option>\n<option value=\"row-reverse\">Row Reverse</option>\n<option value=\"column\">Column</option>\n<option value=\"column-reverse\">Column Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\" style=\"width: 160px\">\n<h2>Wrap</h2>\n<select id=\"flexWrap\">\n<option value=\"nowrap\">No Wrap</option>\n<option value=\"wrap\">Wrap</option>\n<option value=\"wrap-reverse\">Wrap Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\">\n<h2>Basis (all boxes)</h2>\n<button onclick=\"unsetBasis()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Raw Width (all boxes)</h2>\n<button onclick=\"unsetWidth()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Add / Remove Demo Boxes</h2>\n<button onclick=\"addFlexDemoBox()\">Add Box</button>\n<button onclick=\"removeFlexDemoBox()\">Remove Box</button>\n</div>\n</div>");
+	addCircle(100, 150, 75);
+	addCircle(300, 150, 75);
+	addCircle(500, 150, 75);
+	addCircle(700, 150, 75);
+	addCircle(900, 150, 75);
+	addCircle(1100, 150, 75);
 
 	addBox(w.innerWidth / 2, w.innerHeight + 50, w.innerWidth, 100, 0.5, 1, "", true);
 	addBox(w.innerWidth / 2, -50, w.innerWidth, 100, 0.5, 1, "", true);
@@ -156,19 +176,22 @@ d.addEventListener('DOMContentLoaded', () => {
 					for (let i = 0; i < boxes.length - 4; i++) {
 						let dx = boxes[i].position.x - explode.x;
 						let dy = boxes[i].position.y - explode.y;
-						console.log(boxes[i].position);
+						//console.log(boxes[i].position);
+						let fx = expForce / dx, fy = expForce / dy;
+						console.log(`Distance of the mouse from the cube: {X: ${dx}, Y: ${dy}} Applied force to object ${i}: {X: ${fx}, Y: ${fy}}`)
 						// noinspection JSCheckFunctionSignatures
-						Matter.Body.applyForce(boxes[i], boxes[i].position, { x: dx * expForce, y: dy * expForce });
+						Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
 					}
 					explode.d = false;
 					break;
 				// on RMB, pull every object toward the mouse - until it is released
 				case 2:
 					for (let i = 0; i < boxes.length - 4; i++) {
-						let dx = boxes[i].position.x - explode.x;
-						let dy = boxes[i].position.y - explode.y;
+						let dx = explode.x - boxes[i].position.x;
+						let dy = explode.y - boxes[i].position.y;
+						let fx = expForce / dx, fy = expForce / dy;
 						// noinspection JSCheckFunctionSignatures
-						Matter.Body.applyForce(boxes[i], boxes[i].position, { x: -dx * expForce, y: -dy * expForce });
+						Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
 					}
 					break;
 			}
