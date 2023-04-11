@@ -152,18 +152,41 @@ d.addEventListener('DOMContentLoaded', () => {
 		}
 
 		if (explode.d) {
-			for (let i = 0; i < boxes.length - 4; i++) {
-				let dx = boxes[i].position.x - explode.x;
-				let dy = boxes[i].position.y - explode.y;
-				Matter.Body.applyForce(boxes[i], {x: boxes[i].position.x, y: boxes[i].position.y}, {x: dx * expForce, y: dy * expForce});
+			switch (explode.b) {
+				case 0:
+					for (let i = 0; i < boxes.length - 4; i++) {
+						let dx = boxes[i].position.x - explode.x;
+						let dy = boxes[i].position.y - explode.y;
+						Matter.Body.applyForce(boxes[i], {x: boxes[i].position.x, y: boxes[i].position.y}, {
+							x: dx * expForce,
+							y: dy * expForce
+						});
+					}
+					explode.d = false;
+					break;
+				case 2:
+					for (let i = 0; i < boxes.length - 4; i++) {
+						let dx = boxes[i].position.x - explode.x;
+						let dy = boxes[i].position.y - explode.y;
+						Matter.Body.applyForce(boxes[i], {x: boxes[i].position.x, y: boxes[i].position.y}, {
+							x: -dx * expForce,
+							y: -dy * expForce
+						});
+					}
+					break;
 			}
-			explode.d = false;
 		}
 	})();
 
 	w.addEventListener('mousedown', (e) => {
-		explode = {d: true, x: e.clientX, y: e.clientY};
+		explode = {d: true, x: e.clientX, y: e.clientY, b: e.button};
 	});
+
+	w.addEventListener('mouseup', (e) => {
+		explode.d = false;
+	})
+
+	w.addEventListener( 'contextmenu', (e) => { e.preventDefault(); } );
 
 	//css dict
 	const borderRadSlider = d.getElementById("borderRadDemoSlide")
