@@ -11,6 +11,10 @@ body {
 	font-family: 'Fira Code', monospace;
 }
 
+* {
+	user-select: none;
+}
+
 .box {
 	position: absolute;
 	background-color: #45475a;

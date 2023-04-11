@@ -157,6 +157,16 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	composite.add(engine.world, boxes);
 
+	let mouse = Matter.Mouse.create(d.body);
+	let mouseConstraint = Matter.MouseConstraint.create(engine, {
+		mouse: mouse,
+		constraint: {
+			stiffness: 0.2,
+		}
+	});
+
+	composite.add(engine.world, mouseConstraint);
+
 	(function run() {
 		window.requestAnimationFrame(run);
 		Matter.Engine.update(engine, 1000 / 60);
