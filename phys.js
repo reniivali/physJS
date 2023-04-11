@@ -151,25 +151,24 @@ d.addEventListener('DOMContentLoaded', () => {
 
 		if (explode.d) {
 			switch (explode.b) {
+				// on LMB, cause an explosion, but don't allow it to happen every frame until the mouse is released ( it gets weird )
 				case 0:
 					for (let i = 0; i < boxes.length - 4; i++) {
 						let dx = boxes[i].position.x - explode.x;
 						let dy = boxes[i].position.y - explode.y;
-						Matter.Body.applyForce(boxes[i], {x: boxes[i].position.x, y: boxes[i].position.y}, {
-							x: dx * expForce,
-							y: dy * expForce
-						});
+						console.log(boxes[i].position);
+						// noinspection JSCheckFunctionSignatures
+						Matter.Body.applyForce(boxes[i], boxes[i].position, { x: dx * expForce, y: dy * expForce });
 					}
 					explode.d = false;
 					break;
+				// on RMB, pull every object toward the mouse - until it is released
 				case 2:
 					for (let i = 0; i < boxes.length - 4; i++) {
 						let dx = boxes[i].position.x - explode.x;
 						let dy = boxes[i].position.y - explode.y;
-						Matter.Body.applyForce(boxes[i], {x: boxes[i].position.x, y: boxes[i].position.y}, {
-							x: -dx * expForce,
-							y: -dy * expForce
-						});
+						// noinspection JSCheckFunctionSignatures
+						Matter.Body.applyForce(boxes[i], boxes[i].position, { x: -dx * expForce, y: -dy * expForce });
 					}
 					break;
 			}
@@ -185,7 +184,7 @@ d.addEventListener('DOMContentLoaded', () => {
 		explode.y = e.clientY;
 	});
 
-	w.addEventListener('mouseup', (e) => {
+	w.addEventListener('mouseup', () => {
 		explode.d = false;
 	})
 
