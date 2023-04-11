@@ -34,7 +34,8 @@ function addBox(x, y, w, h, b, m, content, stat) {
 	if (!stat) {
 		d.body.appendChild(box);
 		boxes.push(bodies.rectangle(x, y, w, h))
-		boxProp.push({w: w, h: h})
+		Matter.Body.setMass(boxes[boxes.length - 1], m)
+		boxProp.push({w: w, h: h, m: m})
 	} else {
 		boxes.push(bodies.rectangle(x, y, w, h, { isStatic: true }));
 	}
@@ -57,7 +58,7 @@ function addCircle(x, y, r) {
 let iFlexDemoBoxes = 4;
 
 function unsetBasis() {
-	for (let i = 0; i < iFlexDemoBoxes - 1; i++) {
+	for (let i = 0; i < iFlexDemoBoxes; i++) {
 		const flexDemoBox = d.getElementsByClassName("flexDemo")[i];
 		flexDemoBox.style.flexBasis = "";
 		d.getElementById(`flexBasisDemoVal${i}`).innerHTML = `Flex Basis: Unset`;
@@ -66,7 +67,7 @@ function unsetBasis() {
 }
 
 function unsetWidth() {
-	for (let i = 0; i < iFlexDemoBoxes - 1; i++) {
+	for (let i = 0; i < iFlexDemoBoxes; i++) {
 		const flexDemoBox = d.getElementsByClassName("flexDemo")[i];
 		flexDemoBox.style.width = "";
 		d.getElementById(`flexRawWidthDemoVal${i}`).innerHTML = `Raw Width: Unset`;
@@ -161,8 +162,8 @@ function addFlexDemoBox() {
 	flexDemoBox.innerHTML = `<h1>Box ${iFlexDemoBoxes + 1}</h1>`;
 	flexDemoContainer.append(flexDemoBox);
 	iFlexDemoBoxes++;
-	sliderSetup(0, 1000, 1, 1, "flexBasis", "Flex Basis", "Unset", "flexBasis", iFlexDemoBoxes, flexDemoBox, true, "px");
-	sliderSetup(0, 1000, 1, 1, "flexRawWidth", "Raw Width", "Unset", "width", iFlexDemoBoxes, flexDemoBox, true, "px");
+	sliderSetup(0, 1000, 1, 1, "flexBasis", "Flex Basis", "Unset", "flexBasis", iFlexDemoBoxes-1, flexDemoBox, true, "px");
+	sliderSetup(0, 1000, 1, 1, "flexRawWidth", "Raw Width", "Unset", "width", iFlexDemoBoxes-1, flexDemoBox, true, "px");
 	sliderSetup(0, 1, 0.001, 1, "flexGrow", "Flex Grow", "1", "flexGrow", iFlexDemoBoxes, flexDemoBox, true, "");
 	sliderSetup(0, 1, 0.001, 1, "flexShrink", "Flex Shrink", "1", "flexShrink", iFlexDemoBoxes, flexDemoBox, true, "");
 }
@@ -179,9 +180,9 @@ function removeFlexDemoBox() {
 d.addEventListener('DOMContentLoaded', () => {
 	d.body.style.height = w.innerHeight + "px"; //i have NO IDEA why the body doesn't automatically fill the screen but this fixes it
 
-	addBox(1400, 150, 300, 310, 0.5, 1, "<div class=\"subSection\">\n<h1>Border Radius</h1>\n<div id=\"borderRadDemo\"></div>\n<p id=\"borderRadDemoVal\" style=\"margin-bottom: 0;\">Radius: 5px</p>\n<input type=\"range\" min=\"0\" max=\"100\" value=\"5\" class=\"slider\" id=\"borderRadDemoSlide\">\n</div>", false);
-	addBox(1400, 450, 370, 425, 0.5, 1, "<div class=\"subSection\" id=\"boxShadowDemoContainer\">\n<h1>Box Shadow</h1>\n<div id=\"boxShadowDemo\"></div>\n<div id=\"boxShadowDemoSliders\"></div>\n</div>", false);
-	addBox(510, 400, 1000, 625, 0.5, 1, "<div class=\"subSection\" style=\"overflow:auto;\">\n<h1>Flexbox</h1>\n<div id=\"flexDemoContainer\">\n<div class=\"demo flexDemo\">\n<h1>Box 1</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 2</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 3</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 4</h1>\n</div>\n</div>\n<h2 style=\"margin: 0;\">Container Properties</h2>\n<div class=\"flexContainer\">\n<div class=\"demo flexBox\" style=\"width: 300px;\">\n<h2>Direction</h2>\n<select id=\"flexDirection\">\n<option value=\"row\">Row</option>\n<option value=\"row-reverse\">Row Reverse</option>\n<option value=\"column\">Column</option>\n<option value=\"column-reverse\">Column Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\" style=\"width: 160px\">\n<h2>Wrap</h2>\n<select id=\"flexWrap\">\n<option value=\"nowrap\">No Wrap</option>\n<option value=\"wrap\">Wrap</option>\n<option value=\"wrap-reverse\">Wrap Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\">\n<h2>Basis (all boxes)</h2>\n<button onclick=\"unsetBasis()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Raw Width (all boxes)</h2>\n<button onclick=\"unsetWidth()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Add / Remove Demo Boxes</h2>\n<button onclick=\"addFlexDemoBox()\">Add Box</button>\n<button onclick=\"removeFlexDemoBox()\">Remove Box</button>\n</div>\n</div>");
+	addBox(1400, 150, 300, 310, 0.5, 30, "<div class=\"subSection\">\n<h1>Border Radius</h1>\n<div id=\"borderRadDemo\"></div>\n<p id=\"borderRadDemoVal\" style=\"margin-bottom: 0;\">Radius: 5px</p>\n<input type=\"range\" min=\"0\" max=\"100\" value=\"5\" class=\"slider\" id=\"borderRadDemoSlide\">\n</div>", false);
+	addBox(1400, 450, 370, 425, 0.5, 30, "<div class=\"subSection\" id=\"boxShadowDemoContainer\">\n<h1>Box Shadow</h1>\n<div id=\"boxShadowDemo\"></div>\n<div id=\"boxShadowDemoSliders\"></div>\n</div>", false);
+	addBox(510, 400, 1000, 625, 0.5, 30, "<div class=\"subSection\" style=\"overflow:auto;\">\n<h1>Flexbox</h1>\n<div id=\"flexDemoContainer\">\n<div class=\"demo flexDemo\">\n<h1>Box 1</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 2</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 3</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 4</h1>\n</div>\n</div>\n<h2 style=\"margin: 0;\">Container Properties</h2>\n<div class=\"flexContainer\">\n<div class=\"demo flexBox\" style=\"width: 300px;\">\n<h2>Direction</h2>\n<select id=\"flexDirection\">\n<option value=\"row\">Row</option>\n<option value=\"row-reverse\">Row Reverse</option>\n<option value=\"column\">Column</option>\n<option value=\"column-reverse\">Column Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\" style=\"width: 160px\">\n<h2>Wrap</h2>\n<select id=\"flexWrap\">\n<option value=\"nowrap\">No Wrap</option>\n<option value=\"wrap\">Wrap</option>\n<option value=\"wrap-reverse\">Wrap Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\">\n<h2>Basis (all boxes)</h2>\n<button onclick=\"unsetBasis()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Raw Width (all boxes)</h2>\n<button onclick=\"unsetWidth()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Add / Remove Demo Boxes</h2>\n<button onclick=\"addFlexDemoBox()\">Add Box</button>\n<button onclick=\"removeFlexDemoBox()\">Remove Box</button>\n</div>\n</div>");
 	addCircle(100, 150, 75);
 	addCircle(300, 150, 75);
 	addCircle(500, 150, 75);
@@ -231,7 +232,6 @@ d.addEventListener('DOMContentLoaded', () => {
 						let dz = Math.sqrt(dx * dx + dy * dy);
 						let fz = expForce / dz;
 						let fx = fz * (dx / dz), fy = fz * (dy / dz);
-						console.log(`Distance of the mouse from the cube: {X: ${dx}, Y: ${dy}} Applied force to object ${i}: {X: ${fx}, Y: ${fy}}`)
 						if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
 							// noinspection JSCheckFunctionSignatures
 							Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
@@ -281,6 +281,19 @@ d.addEventListener('DOMContentLoaded', () => {
 				break;
 		}
 	});
+
+	/*d.body.addEventListener('resize', () => {
+		console.log("Resizing")
+		composite.remove(engine.world, boxes[boxes.length - 1]);
+		composite.remove(engine.world, boxes[boxes.length - 1]);
+		composite.remove(engine.world, boxes[boxes.length - 1]);
+		composite.remove(engine.world, boxes[boxes.length - 1]);
+		boxes.splice(boxes.length - 4, 4);
+		addBox(w.innerWidth + 50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
+		addBox(w.innerWidth / 2, w.innerHeight + 50, w.innerWidth, 100, 0.5, 1, "", true);
+		addBox(-50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
+		addBox(w.innerWidth / 2, -50, w.innerWidth, 100, 0.5, 1, "", true);
+	});*/
 
 	w.addEventListener( 'contextmenu', (e) => { e.preventDefault(); } );
 
