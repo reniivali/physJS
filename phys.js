@@ -3,6 +3,7 @@ const w = window;
 let gravity = 0.75;
 let boxes = [];
 let boxProp = [];
+let extraBoxes = [];
 let explode = false;
 let expForce = 500;
 const engine = Matter.Engine.create();
@@ -41,7 +42,7 @@ function addBox(x, y, w, h, b, m, content, stat) {
 	}
 }
 
-function addCircle(x, y, r) {
+function addCircle(x, y, r, extra) {
 	let circle = d.createElement('div');
 	circle.classList.add('box');
 	circle.style.width = r*2 + 'px';
@@ -51,7 +52,11 @@ function addCircle(x, y, r) {
 	circle.style.borderRadius = r + 'px';
 	circle.innerHTML = `<div style="border-radius:${r}px;"><div style="position:relative;background-color:#fab387;top:${r-14}px;left:-5px;width:${r-10}px;height:8px;"></div></div>`
 	d.body.appendChild(circle);
-	boxes.push(bodies.circle(x, y, r))
+	if (extra) {
+		extraBoxes.push(bodies.circle(x, y, r))
+	} else {
+		boxes.push(bodies.circle(x, y, r))
+	}
 	boxProp.push({w: r*2, h: r*2})
 }
 
@@ -245,6 +250,18 @@ d.addEventListener('DOMContentLoaded', () => {
 							// noinspection JSCheckFunctionSignatures
 							Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
 					}
+					if (extraBoxes.length > 0) {
+						for (let i = 0; i < extraBoxes.length; i++) {
+							let dx = extraBoxes[i].position.x - explode.x;
+							let dy = extraBoxes[i].position.y - explode.y;
+							let dz = Math.sqrt(dx * dx + dy * dy);
+							let fz = expForce / dz;
+							let fx = fz * (dx / dz), fy = fz * (dy / dz);
+							if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
+								// noinspection JSCheckFunctionSignatures
+								Matter.Body.applyForce(extraBoxes[i], extraBoxes[i].position, { x: fx, y: fy });
+						}
+					}
 					explode.d = false;
 					break;
 				// on RMB, pull every object toward the mouse - until it is released
@@ -259,6 +276,18 @@ d.addEventListener('DOMContentLoaded', () => {
 							// noinspection JSCheckFunctionSignatures
 							Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
 					}
+					if (extraBoxes.length > 0) {
+						for (let i = 0; i < extraBoxes.length; i++) {
+							let dx = explode.x - extraBoxes[i].position.x;
+							let dy = explode.y - extraBoxes[i].position.y;
+							let dz = Math.sqrt(dx * dx + dy * dy);
+							let fz = expForce / dz;
+							let fx = fz * (dx / dz), fy = fz * (dy / dz);
+							if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
+								// noinspection JSCheckFunctionSignatures
+								Matter.Body.applyForce(extraBoxes[i], extraBoxes[i].position, { x: fx, y: fy });
+						}
+					}
 					break;
 			}
 		}
@@ -272,6 +301,10 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	w.addEventListener('mousedown', (e) => {
 		explode = {d: true, x: e.clientX, y: e.clientY, b: e.button};
+		if (e.button === 2) {
+			//addCircle(w.innerWidth/2,w.innerHeight/2, 75, true);
+			//composite.add(engine.world, extraBoxes[extraBoxes.length - 1]);
+		}
 	});
 
 	w.addEventListener('mousemove', (e) => {
