@@ -4,11 +4,12 @@ let gravity = 0.75;
 let boxes = [];
 let boxProp = [];
 let explode = false;
-let expForce = 200;
+let expForce = 500;
 const engine = Matter.Engine.create();
 const bodies = Matter.Bodies;
 const runner = Matter.Runner.create();
 const composite = Matter.Composite;
+let showOptions = true;
 
 /**
  * Adds a physics box
@@ -116,6 +117,42 @@ function sliderSetup(min, max, step, value, id, did, dval, cngval, nid, appendTo
 	}
 }
 
+/**
+ * @param min Slider's minimum value
+ * @param max Slider's maximum value
+ * @param step Slider's step value
+ * @param value Slider's starting value
+ * @param id Slider's base id
+ * @param did What the display p element should call the changing value
+ * @param dval What the display p element should display as the starting value
+ * @param cngval What the slider should change (JS value)
+ * @param discrim discriminating id of the slider
+ * @param appendTo the demo box element passed in
+ * @param unit (OPTIONAL) the unit of the value (px, %, etc.)
+ */
+function physSliderSetup(min, max, step, value, id, did, dval, cngval, discrim, appendTo, unit) {
+	const container = d.createElement("div");
+	const disp = d.createElement("p");
+	disp.id = `${id}Val${discrim}`;
+	disp.innerHTML = `${did}: ${dval}`
+
+	const slider = d.createElement("input");
+	slider.type = "range";
+	slider.min = min;
+	slider.max = max;
+	slider.value = value;
+	slider.step = step;
+	slider.className = "slider";
+	slider.id = `${id}Slide${discrim}`;
+
+	appendTo.append(container);
+	container.append(disp, slider);
+	slider.addEventListener('input', function() {
+		eval(cngval + " = " + slider.value);
+		disp.innerHTML = `${did}: ${slider.value}${unit}`;
+	});
+}
+
 function addFlexDemoBox() {
 	const flexDemoContainer = d.getElementById("flexDemoContainer");
 	const flexDemoBox = d.createElement("div");
@@ -140,6 +177,8 @@ function removeFlexDemoBox() {
 }
 
 d.addEventListener('DOMContentLoaded', () => {
+	d.body.style.height = w.innerHeight + "px"; //i have NO IDEA why the body doesn't automatically fill the screen but this fixes it
+
 	addBox(1400, 150, 300, 310, 0.5, 1, "<div class=\"subSection\">\n<h1>Border Radius</h1>\n<div id=\"borderRadDemo\"></div>\n<p id=\"borderRadDemoVal\" style=\"margin-bottom: 0;\">Radius: 5px</p>\n<input type=\"range\" min=\"0\" max=\"100\" value=\"5\" class=\"slider\" id=\"borderRadDemoSlide\">\n</div>", false);
 	addBox(1400, 450, 370, 425, 0.5, 1, "<div class=\"subSection\" id=\"boxShadowDemoContainer\">\n<h1>Box Shadow</h1>\n<div id=\"boxShadowDemo\"></div>\n<div id=\"boxShadowDemoSliders\"></div>\n</div>", false);
 	addBox(510, 400, 1000, 625, 0.5, 1, "<div class=\"subSection\" style=\"overflow:auto;\">\n<h1>Flexbox</h1>\n<div id=\"flexDemoContainer\">\n<div class=\"demo flexDemo\">\n<h1>Box 1</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 2</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 3</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 4</h1>\n</div>\n</div>\n<h2 style=\"margin: 0;\">Container Properties</h2>\n<div class=\"flexContainer\">\n<div class=\"demo flexBox\" style=\"width: 300px;\">\n<h2>Direction</h2>\n<select id=\"flexDirection\">\n<option value=\"row\">Row</option>\n<option value=\"row-reverse\">Row Reverse</option>\n<option value=\"column\">Column</option>\n<option value=\"column-reverse\">Column Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\" style=\"width: 160px\">\n<h2>Wrap</h2>\n<select id=\"flexWrap\">\n<option value=\"nowrap\">No Wrap</option>\n<option value=\"wrap\">Wrap</option>\n<option value=\"wrap-reverse\">Wrap Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\">\n<h2>Basis (all boxes)</h2>\n<button onclick=\"unsetBasis()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Raw Width (all boxes)</h2>\n<button onclick=\"unsetWidth()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Add / Remove Demo Boxes</h2>\n<button onclick=\"addFlexDemoBox()\">Add Box</button>\n<button onclick=\"removeFlexDemoBox()\">Remove Box</button>\n</div>\n</div>");
@@ -154,6 +193,9 @@ d.addEventListener('DOMContentLoaded', () => {
 	addBox(w.innerWidth / 2, -50, w.innerWidth, 100, 0.5, 1, "", true);
 	addBox(-50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
 	addBox(w.innerWidth + 50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
+
+	physSliderSetup(-10, 10, 0.01, 1, "gravY", "Y Axis Gravity", "1", "engine.world.gravity.y", "", d.getElementById("optionsSliders"), "");
+	physSliderSetup(-10, 10, 0.01, 1, "gravX", "X Axis Gravity", "0", "engine.world.gravity.x", "", d.getElementById("optionsSliders"), "");
 
 	composite.add(engine.world, boxes);
 
@@ -181,11 +223,6 @@ d.addEventListener('DOMContentLoaded', () => {
 
 		if (explode.d) {
 			switch (explode.b) {
-				/*
-				let dz = Math.sqrt(dx * dx + dy * dy)
-let fz = expForce / dz
-let fx = fz * (dx/dz)
-let fy = fz * (dy/dz)*/
 				// on LMB, cause an explosion, but don't allow it to happen every frame until the mouse is released ( it gets weird )
 				case 0:
 					for (let i = 0; i < boxes.length - 4; i++) {
@@ -216,6 +253,12 @@ let fy = fz * (dy/dz)*/
 					break;
 			}
 		}
+
+		if (showOptions) {
+			d.getElementById("options").style.display = "block";
+		} else {
+			d.getElementById("options").style.display = "none";
+		}
 	})();
 
 	w.addEventListener('mousedown', (e) => {
@@ -229,7 +272,15 @@ let fy = fz * (dy/dz)*/
 
 	w.addEventListener('mouseup', () => {
 		explode.d = false;
-	})
+	});
+
+	w.addEventListener('keydown', (e) => {
+		switch (e.key) {
+			case "o":
+				showOptions = !showOptions;
+				break;
+		}
+	});
 
 	w.addEventListener( 'contextmenu', (e) => { e.preventDefault(); } );
 
