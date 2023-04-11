@@ -19,8 +19,9 @@ const composite = Matter.Composite;
  * @param b the box's bounciness
  * @param m the box's mass
  * @param content the box's content, in HTML
+ * @param stat whether the object is static or not
  */
-function addBox(x, y, w, h, b, m, content, static) {
+function addBox(x, y, w, h, b, m, content, stat) {
 	let box = d.createElement('div');
 	box.classList.add('box');
 	box.style.width = w + 'px';
@@ -29,7 +30,7 @@ function addBox(x, y, w, h, b, m, content, static) {
 	box.style.top = y + 'px';
 	box.innerHTML = content;
 
-	if (!static) {
+	if (!stat) {
 		d.body.appendChild(box);
 		boxes.push(bodies.rectangle(x, y, w, h))
 		boxProp.push({w: w, h: h})
