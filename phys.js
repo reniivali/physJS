@@ -4,7 +4,7 @@ let gravity = 0.75;
 let boxes = [];
 let boxProp = [];
 let explode = false;
-let expForce = 1000;
+let expForce = 200;
 const engine = Matter.Engine.create();
 const bodies = Matter.Bodies;
 const runner = Matter.Runner.create();
@@ -179,8 +179,9 @@ d.addEventListener('DOMContentLoaded', () => {
 						//console.log(boxes[i].position);
 						let fx = expForce / dx, fy = expForce / dy;
 						console.log(`Distance of the mouse from the cube: {X: ${dx}, Y: ${dy}} Applied force to object ${i}: {X: ${fx}, Y: ${fy}}`)
-						// noinspection JSCheckFunctionSignatures
-						Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
+						if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
+							// noinspection JSCheckFunctionSignatures
+							Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
 					}
 					explode.d = false;
 					break;
@@ -190,8 +191,9 @@ d.addEventListener('DOMContentLoaded', () => {
 						let dx = explode.x - boxes[i].position.x;
 						let dy = explode.y - boxes[i].position.y;
 						let fx = expForce / dx, fy = expForce / dy;
-						// noinspection JSCheckFunctionSignatures
-						Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
+						if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
+							// noinspection JSCheckFunctionSignatures
+							Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
 					}
 					break;
 			}
