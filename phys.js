@@ -217,6 +217,12 @@ d.addEventListener('DOMContentLoaded', () => {
 		let els = d.getElementsByClassName('box');
 		for (let i = 0; i < boxes.length - 4; i++) {
 			let b = boxes[i];
+			let px = b.position.x, py = b.position.y;
+			if (px < 0 || px > w.innerWidth || py < 0 || py > w.innerHeight) {
+				Matter.Body.setPosition(b, { x: w.innerWidth / 2, y: w.innerHeight / 2 })
+				//noinspection JSCheckFunctionSignatures
+				Matter.Body.setVelocity(b, { x: 0, y: 0 })
+			}
 			els[i].style.top = b.position.y - boxProp[i].h / 2 + 'px';
 			els[i].style.left = b.position.x - boxProp[i].w / 2 + 'px';
 			els[i].style.transform = `rotate(${b.angle}rad)`;
