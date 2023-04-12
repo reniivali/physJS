@@ -193,9 +193,18 @@ const phys = {
 			disp.innerHTML = `${did}: ${slider.value}${unit}`;
 		});
 	},
-	enactForce: function (obj, objProp, ex, exclude) {
+	/**
+	 * enact a force (explosion) on an array of objects
+	 * @param obj array of objects to enact the force on
+	 * @param objProp array of properties of the objects
+	 * @param ex the force properties; should be an object with X and Y orgin points, and a bool stating wether or not to reverse the explosion.
+	 * @param exclude the number of objects to exclude from the application of force
+	 * @param bExclude the number of objects to exclude from the beginning of the array
+	 */
+	enactForce: function (obj, objProp, ex, exclude, bExclude) {
 		exclude = exclude || 0;
-		for (let i = 0; i < obj.length - exclude; i++) {
+		bExclude = bExclude || 0;
+		for (let i = bExclude; i < obj.length - exclude; i++) {
 			let dx, dy;
 			if (ex.rv) {
 				dx = ex.x - obj[i].position.x;
@@ -281,7 +290,7 @@ d.addEventListener('DOMContentLoaded', () => {
 					break;
 				// on RMB, pull every object toward the mouse - until it is released
 				case 2:
-					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: true}, 4);
+					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: true}, 4, 3);
 					if (extraBoxes.length > 0) {
 						phys.enactForce(extraBoxes, exBoxProp, {x: explode.x, y: explode.y, rv: true});
 					}
