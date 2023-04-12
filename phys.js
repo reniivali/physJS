@@ -6,6 +6,7 @@ let gravity = 0.75;
 let boxes = [];
 let boxProp = [];
 let extraBoxes = [];
+let exBoxProp = [];
 let explode = false;
 let expForce = 500;
 const engine = Matter.Engine.create();
@@ -170,7 +171,7 @@ const phys = {
 	 * @param appendTo the demo box element passed in
 	 * @param unit (OPTIONAL) the unit of the value (px, %, etc.)
 	 */
-	SliderSetup: function (min, max, step, value, id, did, dval, cngval, discrim, appendTo, unit) {
+	sliderSetup: function (min, max, step, value, id, did, dval, cngval, discrim, appendTo, unit) {
 		const container = d.createElement("div");
 		const disp = d.createElement("p");
 		disp.id = `${id}Val${discrim}`;
@@ -191,6 +192,25 @@ const phys = {
 			eval(cngval + " = " + slider.value);
 			disp.innerHTML = `${did}: ${slider.value}${unit}`;
 		});
+	},
+	enactForce: function (obj, objProp, ex, exclude) {
+		exclude = exclude || 0;
+		for (let i = 0; i < obj.length - exclude; i++) {
+			let dx, dy;
+			if (ex.rv) {
+				dx = ex.x - obj[i].position.x;
+				dy = ex.y - obj[i].position.y;
+			} else {
+				dx = obj[i].position.x - ex.x;
+				dy = obj[i].position.y - ex.y;
+			}
+			let dz = Math.sqrt(dx * dx + dy * dy),
+				fz = expForce / dz,
+				fx = fz * (dx / dz), fy = fz * (dy / dz);
+			if (dx > objProp[i].w/2 || dy > objProp[i].h/2 || dx < -objProp[i].w/2 || dy < -objProp[i].h/2)
+				// noinspection JSCheckFunctionSignatures
+				Matter.Body.applyForce(obj[i], obj[i].position, { x: fx, y: fy });
+		}
 	}
 }
 
@@ -215,8 +235,9 @@ d.addEventListener('DOMContentLoaded', () => {
 	phys.addBox(-50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
 	phys.addBox(w.innerWidth + 50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
 
-	phys.SliderSetup(-10, 10, 0.01, 1, "gravY", "Y Axis Gravity", "1", "engine.world.gravity.y", "", d.getElementById("optionsSliders"), "");
-	phys.SliderSetup(-10, 10, 0.01, 1, "gravX", "X Axis Gravity", "0", "engine.world.gravity.x", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(-10, 10, 0.01, 1, "gravY", "Y Axis Gravity", "1", "engine.world.gravity.y", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(-10, 10, 0.01, 1, "gravX", "X Axis Gravity", "0", "engine.world.gravity.x", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(10, 10000, 1, 500, "expForce", "Explosion Force", "500", "expForce", "", d.getElementById("optionsSliders"), "");
 
 	composite.add(engine.world, boxes);
 
@@ -252,53 +273,17 @@ d.addEventListener('DOMContentLoaded', () => {
 			switch (explode.b) {
 				// on LMB, cause an explosion, but don't allow it to happen every frame until the mouse is released ( it gets weird )
 				case 0:
-					for (let i = 0; i < boxes.length - 4; i++) {
-						let dx = boxes[i].position.x - explode.x;
-						let dy = boxes[i].position.y - explode.y;
-						let dz = Math.sqrt(dx * dx + dy * dy);
-						let fz = expForce / dz;
-						let fx = fz * (dx / dz), fy = fz * (dy / dz);
-						if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
-							// noinspection JSCheckFunctionSignatures
-							Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
-					}
+					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: false}, 4);
 					if (extraBoxes.length > 0) {
-						for (let i = 0; i < extraBoxes.length; i++) {
-							let dx = extraBoxes[i].position.x - explode.x;
-							let dy = extraBoxes[i].position.y - explode.y;
-							let dz = Math.sqrt(dx * dx + dy * dy);
-							let fz = expForce / dz;
-							let fx = fz * (dx / dz), fy = fz * (dy / dz);
-							if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
-								// noinspection JSCheckFunctionSignatures
-								Matter.Body.applyForce(extraBoxes[i], extraBoxes[i].position, { x: fx, y: fy });
-						}
+						phys.enactForce(extraBoxes, exBoxProp, {x: explode.x, y: explode.y, rv: false});
 					}
 					explode.d = false;
 					break;
 				// on RMB, pull every object toward the mouse - until it is released
 				case 2:
-					for (let i = 3; i < boxes.length - 4; i++) {
-						let dx = explode.x - boxes[i].position.x;
-						let dy = explode.y - boxes[i].position.y;
-						let dz = Math.sqrt(dx * dx + dy * dy);
-						let fz = expForce / dz;
-						let fx = fz * (dx / dz), fy = fz * (dy / dz);
-						if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
-							// noinspection JSCheckFunctionSignatures
-							Matter.Body.applyForce(boxes[i], boxes[i].position, { x: fx, y: fy });
-					}
+					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: true}, 4);
 					if (extraBoxes.length > 0) {
-						for (let i = 0; i < extraBoxes.length; i++) {
-							let dx = explode.x - extraBoxes[i].position.x;
-							let dy = explode.y - extraBoxes[i].position.y;
-							let dz = Math.sqrt(dx * dx + dy * dy);
-							let fz = expForce / dz;
-							let fx = fz * (dx / dz), fy = fz * (dy / dz);
-							if (dx > boxProp[i].w/2 || dy > boxProp[i].h/2 || dx < -boxProp[i].w/2 || dy < -boxProp[i].h/2)
-								// noinspection JSCheckFunctionSignatures
-								Matter.Body.applyForce(extraBoxes[i], extraBoxes[i].position, { x: fx, y: fy });
-						}
+						phys.enactForce(extraBoxes, exBoxProp, {x: explode.x, y: explode.y, rv: true});
 					}
 					break;
 			}
