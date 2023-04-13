@@ -2,7 +2,6 @@
 
 const d = document;
 const w = window;
-let gravity = 0.75;
 let boxes = [];
 let boxProp = [];
 let extraBoxes = [];
@@ -15,6 +14,7 @@ const runner = Matter.Runner.create();
 const composite = Matter.Composite;
 let showOptions = true;
 let iFlexDemoBoxes = 4;
+let boxMass = 30;
 
 /**
  * functions for the CSS dictionary elements
@@ -246,7 +246,8 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravY", "Y Axis Gravity", "1", "engine.world.gravity.y", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravX", "X Axis Gravity", "0", "engine.world.gravity.x", "", d.getElementById("optionsSliders"), "");
-	phys.sliderSetup(10, 10000, 1, 500, "expForce", "Explosion Force", "500", "expForce", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(10, 2000, 1, 500, "expForce", "Explosion Force", "500", "expForce", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(30, 1000, 1, 30, "boxMass", "Box Mass", "30", "boxMass", "", d.getElementById("optionsSliders"), "");
 
 	composite.add(engine.world, boxes);
 
@@ -260,6 +261,7 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	composite.add(engine.world, mouseConstraint);
 
+	let oldBoxMass;
 	(function run() {
 		window.requestAnimationFrame(run);
 		Matter.Engine.update(engine, 1000 / 60);
@@ -272,6 +274,11 @@ d.addEventListener('DOMContentLoaded', () => {
 				Matter.Body.setPosition(b, { x: w.innerWidth / 2, y: w.innerHeight / 2 })
 				//noinspection JSCheckFunctionSignatures
 				Matter.Body.setVelocity(b, { x: 0, y: 0 })
+			}
+			if (oldBoxMass !== boxMass) {
+				for (let i = 0; i < boxes.length - 13; i++) {
+					Matter.Body.setMass(boxes[i], boxMass);
+				}
 			}
 			els[i].style.top = b.position.y - boxProp[i].h / 2 + 'px';
 			els[i].style.left = b.position.x - boxProp[i].w / 2 + 'px';

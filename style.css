@@ -181,6 +181,7 @@ button {
 }
 
 #options {
+	overflow-y: scroll;
 	z-index: 100;
 	position: absolute;
 	top: -280px;
