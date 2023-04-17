@@ -228,7 +228,8 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	phys.addBox(1400, 150, 300, 310, 0.5, 30, "<div class=\"subSection\">\n<h1>Border Radius</h1>\n<div id=\"borderRadDemo\"></div>\n<p id=\"borderRadDemoVal\" style=\"margin-bottom: 0;\">Radius: 5px</p>\n<input type=\"range\" min=\"0\" max=\"100\" value=\"5\" class=\"slider\" id=\"borderRadDemoSlide\">\n</div>", false);
 	phys.addBox(1400, 450, 370, 425, 0.5, 30, "<div class=\"subSection\" id=\"boxShadowDemoContainer\">\n<h1>Box Shadow</h1>\n<div id=\"boxShadowDemo\"></div>\n<div id=\"boxShadowDemoSliders\"></div>\n</div>", false);
-	phys.addBox(510, 400, 1000, 625, 0.5, 30, "<div class=\"subSection\" style=\"overflow:auto;\">\n<h1>Flexbox</h1>\n<div id=\"flexDemoContainer\">\n<div class=\"demo flexDemo\">\n<h1>Box 1</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 2</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 3</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 4</h1>\n</div>\n</div>\n<h2 style=\"margin: 0;\">Container Properties</h2>\n<div class=\"flexContainer\">\n<div class=\"demo flexBox\" style=\"width: 300px;\">\n<h2>Direction</h2>\n<select id=\"flexDirection\">\n<option value=\"row\">Row</option>\n<option value=\"row-reverse\">Row Reverse</option>\n<option value=\"column\">Column</option>\n<option value=\"column-reverse\">Column Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\" style=\"width: 160px\">\n<h2>Wrap</h2>\n<select id=\"flexWrap\">\n<option value=\"nowrap\">No Wrap</option>\n<option value=\"wrap\">Wrap</option>\n<option value=\"wrap-reverse\">Wrap Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\">\n<h2>Basis (all boxes)</h2>\n<button onclick=\"dict.unsetBasis()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Raw Width (all boxes)</h2>\n<button onclick=\"dict.unsetWidth()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Add / Remove Demo Boxes</h2>\n<button onclick=\"dict.addFlexDemoBox()\">Add Box</button>\n<button onclick=\"dict.removeFlexDemoBox()\">Remove Box</button>\n</div>\n</div>");
+	phys.addBox(510, 400, 1000, 625, 0.5, 30, "<div class=\"subSection\" style=\"overflow:auto;\">\n<h1>Flexbox</h1>\n<div id=\"flexDemoContainer\">\n<div class=\"demo flexDemo\">\n<h1>Box 1</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 2</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 3</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 4</h1>\n</div>\n</div>\n<h2 style=\"margin: 0;\">Container Properties</h2>\n<div class=\"flexContainer\">\n<div class=\"demo flexBox\" style=\"width: 300px;\">\n<h2>Direction</h2>\n<select id=\"flexDirection\">\n<option value=\"row\">Row</option>\n<option value=\"row-reverse\">Row Reverse</option>\n<option value=\"column\">Column</option>\n<option value=\"column-reverse\">Column Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\" style=\"width: 160px\">\n<h2>Wrap</h2>\n<select id=\"flexWrap\">\n<option value=\"nowrap\">No Wrap</option>\n<option value=\"wrap\">Wrap</option>\n<option value=\"wrap-reverse\">Wrap Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\">\n<h2>Basis (all boxes)</h2>\n<button onclick=\"dict.unsetBasis()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Raw Width (all boxes)</h2>\n<button onclick=\"dict.unsetWidth()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Add / Remove Demo Boxes</h2>\n<button onclick=\"dict.addFlexDemoBox()\">Add Box</button>\n<button onclick=\"dict.removeFlexDemoBox()\">Remove Box</button>\n</div>\n</div>", false);
+	phys.addBox(1300, 150, 600, 600, 0.5, 30, `<div class="subSection" style="overflow-y: scroll;"><h1>Rotate, Transform</h1><div id="rotDemoContainer"><div id="rotateDemo"><div class="propDemo cf ff">front</div><div class="propDemo cf fl">left</div><div class="propDemo cf fr">right</div><div class="propDemo cf fba">back</div><div class="propDemo cf ft">top</div><div class="propDemo cf fbt">bottom</div></div></div><div id="rotateDemoSliders" class="demoSliders"></div></div>`, false)
 	phys.addCircle(100, 150, 75);
 	phys.addCircle(300, 150, 75);
 	phys.addCircle(500, 150, 75);
@@ -297,7 +298,7 @@ d.addEventListener('DOMContentLoaded', () => {
 					break;
 				// on RMB, pull every object toward the mouse - until it is released
 				case 2:
-					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: true}, 4, 3);
+					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: true}, 4, 4);
 					if (extraBoxes.length > 0) {
 						phys.enactForce(extraBoxes, exBoxProp, {x: explode.x, y: explode.y, rv: true});
 					}
@@ -383,13 +384,28 @@ d.addEventListener('DOMContentLoaded', () => {
 	dict.sliderSetup(0, 100, 1, 0, "boxShadowBlur", "blur-radius", "0", "", 1, boxShadowContainer, false,  "px");
 	dict.sliderSetup(0, 100, 1, 0, "boxShadowSpread", "spread-radius", "0", "", 1, boxShadowContainer, false,  "px");
 
-	function updateBoxShadow() {
-		const x = d.getElementById("boxShadowXDemoSlide1").value;
-		const y = d.getElementById("boxShadowYDemoSlide1").value;
-		const blur = d.getElementById("boxShadowBlurDemoSlide1").value;
-		const spread = d.getElementById("boxShadowSpreadDemoSlide1").value;
-		boxShadowDemo.style.boxShadow = `${x}px ${y}px ${blur}px ${spread}px black`;
-	}
+	const rotDemo = d.getElementById("rotateDemo");
+	const rotDemoSld = d.getElementById("rotateDemoSliders");
+	dict.sliderSetup(0, 360, 1, 0, "rotateZ", "Rotate Z", "0", "", 1, rotDemoSld, false, "deg");
+	dict.sliderSetup(0, 360, 1, 0, "rotateX", "Rotate X", "0", "", 1, rotDemoSld, false, "deg");
+	dict.sliderSetup(0, 360, 1, 0, "rotateY", "Rotate Y", "0", "", 1, rotDemoSld, false, "deg");
+	dict.sliderSetup(-1000, 100, 1, -100, "translateZ", "Translate Z", "-100", "", 1, rotDemoSld, false, "px");
+	dict.sliderSetup(-1000, 1000, 1, 0, "translateX", "Translate X", "0", "", 1, rotDemoSld, false, "px");
+	dict.sliderSetup(-1000, 1000, 1, 0, "translateY", "Translate Y", "0", "", 1, rotDemoSld, false, "px");
 
-	setInterval(updateBoxShadow, 50);
+	setInterval(() => {
+		const bsx = d.getElementById("boxShadowXDemoSlide1").value;
+		const bsy = d.getElementById("boxShadowYDemoSlide1").value;
+		const bsblur = d.getElementById("boxShadowBlurDemoSlide1").value;
+		const bsspread = d.getElementById("boxShadowSpreadDemoSlide1").value;
+		boxShadowDemo.style.boxShadow = `${bsx}px ${bsy}px ${bsblur}px ${bsspread}px black`;
+
+		const rz = d.getElementById("rotateZDemoSlide1").value;
+		const rx = d.getElementById("rotateXDemoSlide1").value;
+		const ry = d.getElementById("rotateYDemoSlide1").value;
+		const tz = d.getElementById("translateZDemoSlide1").value;
+		const tx = d.getElementById("translateXDemoSlide1").value;
+		const ty = d.getElementById("translateYDemoSlide1").value;
+		rotDemo.style.transform = `rotateZ(${rz}deg) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${tz}px) translateX(${tx}px) translateY(${ty}px)`;
+	}, 50)
 });
