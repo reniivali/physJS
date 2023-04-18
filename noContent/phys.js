@@ -139,8 +139,8 @@ const phys = {
 
 d.addEventListener('DOMContentLoaded', () => {
 	d.body.style.height = w.innerHeight + "px"; //i have NO IDEA why the body doesn't automatically fill the screen but this fixes it
-	for (let i = 0; i < 20; i++) {
-		for (let j = 0; j < 20; j++) {
+	for (let i = 0; i < 60; i++) {
+		for (let j = 0; j < 30; j++) {
 			phys.addCircle(i * 30 + 30, j * 30 + 30, 14);
 		}
 	}
