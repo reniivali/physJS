@@ -121,6 +121,7 @@ const phys = {
 	 * @param obj array of objects to enact the force on
 	 * @param objProp array of properties of the objects
 	 * @param ex the force properties; should be an object with X and Y orgin points, and a bool stating wether or not to reverse the explosion.
+	 * @param force the force to apply
 	 * @param exclude the number of objects to exclude from the application of force
 	 * @param bExclude the number of objects to exclude from the beginning of the array
 	 */
