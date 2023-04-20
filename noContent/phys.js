@@ -70,9 +70,13 @@ const phys = {
 		circle.innerHTML = `<div style="border-radius:${r}px;"><div style="position:relative;background-color:#fab387;top:${(r/4)-1}px;left:-5px;width:${(r)+4}px;height:2px;"></div></div>`
 		d.getElementById('content').appendChild(circle);
 		if (extra) {
-			boxes.push(bodies.circle(x, y, r))
+			boxes.push(bodies.circle(x, y, r));
+			boxes[boxes.length - 1].frictionAir = 0;
+			boxes[boxes.length - 1].restitution = 0;
 		} else {
-			boxes.push(bodies.circle(x, y, r))
+			boxes.push(bodies.circle(x, y, r));
+			boxes[boxes.length - 1].frictionAir = 0;
+			boxes[boxes.length - 1].restitution = 0;
 		}
 		boxProp.push({w: r*2, h: r*2})
 	},
