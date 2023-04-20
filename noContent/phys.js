@@ -10,6 +10,7 @@ let boxMass = 17;
 let columns = 30;
 let rows = 20;
 let oldR = 20, oldC = 30;
+let oldW = w.innerWidth, oldH = w.innerHeight;
 let mouseConstraint;
 const engine = Matter.Engine.create();
 const body = Matter.Body;
@@ -201,7 +202,7 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	let oldBoxMass;
 	(function run() {
-		if (oldR !== rows || oldC !== columns) {
+		if (oldR !== rows || oldC !== columns || oldW !== w.innerWidth || oldH !== w.innerHeight) {
 			phys.resetSim();
 		}
 
@@ -247,7 +248,7 @@ d.addEventListener('DOMContentLoaded', () => {
 			d.getElementById("options").style.display = "none";
 		}
 
-		oldR = rows; oldC = columns;
+		oldR = rows; oldC = columns; oldW = w.innerWidth; oldH = w.innerHeight;
 	})();
 
 	w.addEventListener('mousedown', (e) => {
