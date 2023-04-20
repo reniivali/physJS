@@ -11,6 +11,7 @@ let columns = 30;
 let rows = 20;
 let oldR = 20, oldC = 30;
 let oldW = w.innerWidth, oldH = w.innerHeight;
+let centerGravity = 0;
 let mouseConstraint;
 const engine = Matter.Engine.create();
 const body = Matter.Body;
@@ -123,7 +124,7 @@ const phys = {
 	 * @param exclude the number of objects to exclude from the application of force
 	 * @param bExclude the number of objects to exclude from the beginning of the array
 	 */
-	enactForce: function (obj, objProp, ex, exclude, bExclude) {
+	enactForce: function (obj, objProp, ex, force, exclude, bExclude) {
 		exclude = exclude || 0;
 		bExclude = bExclude || 0;
 		for (let i = bExclude; i < obj.length - exclude; i++) {
@@ -136,7 +137,7 @@ const phys = {
 				dy = obj[i].position.y - ex.y;
 			}
 			let dz = Math.sqrt(dx * dx + dy * dy),
-				fz = expForce / dz,
+				fz = force / dz,
 				fx = fz * (dx / dz), fy = fz * (dy / dz);
 			if (dx > objProp[i].w/2 || dy > objProp[i].h/2 || dx < -objProp[i].w/2 || dy < -objProp[i].h/2)
 				// noinspection JSCheckFunctionSignatures
@@ -189,6 +190,7 @@ d.addEventListener('DOMContentLoaded', () => {
 	phys.sliderSetup(1, 60, 1, 30, "columns", "Ball Columns", "30", "columns", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravY", "Y Axis Gravity", "1", "engine.world.gravity.y", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravX", "X Axis Gravity", "0", "engine.world.gravity.x", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(0, 300, 1, 0, "centralGravity", "Central Gravity", "0", "centerGravity", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(10, 2000, 1, 300, "expForce", "Explosion Force", "300", "expForce", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(30, 1000, 1, 17, "boxMass", "Box Mass", "17", "boxMass", "", d.getElementById("optionsSliders"), "");
 
@@ -236,15 +238,17 @@ d.addEventListener('DOMContentLoaded', () => {
 			switch (explode.b) {
 				// on LMB, cause an explosion, but don't allow it to happen every frame until the mouse is released ( it gets weird )
 				case 0:
-					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: false}, 4);
+					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: false}, expForce,4);
 					explode.d = false;
 					break;
 				// on RMB, pull every object toward the mouse - until it is released
 				case 2:
-					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: true}, 4, 0);
+					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: true}, expForce,4);
 					break;
 			}
 		}
+
+		phys.enactForce(boxes, boxProp, {x: w.innerWidth/2, y: w.innerHeight/2, rv: true}, centerGravity, 4);
 
 		if (showOptions) {
 			d.getElementById("options").style.display = "block";
