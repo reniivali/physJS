@@ -4,12 +4,15 @@ const d = document;
 const w = window;
 let boxes = [];
 let boxProp = [];
-let extraBoxes = [];
-let exBoxProp = [];
-let explode = false;
+let explode = {};
 let expForce = 200;
 let boxMass = 17;
+let columns = 30;
+let rows = 20;
+let oldR = 20, oldC = 30;
+let mouseConstraint;
 const engine = Matter.Engine.create();
+const body = Matter.Body;
 const bodies = Matter.Bodies;
 const runner = Matter.Runner.create();
 const composite = Matter.Composite;
@@ -40,7 +43,7 @@ const phys = {
 		box.innerHTML = content;
 	
 		if (!stat) {
-			d.body.appendChild(box);
+			d.getElementById('content').appendChild(box);
 			boxes.push(bodies.rectangle(x, y, w, h))
 			Matter.Body.setMass(boxes[boxes.length - 1], m)
 			boxProp.push({w: w, h: h, m: m})
@@ -64,9 +67,9 @@ const phys = {
 		circle.style.top = y + 'px';
 		circle.style.borderRadius = r + 'px';
 		circle.innerHTML = `<div style="border-radius:${r}px;"><div style="position:relative;background-color:#fab387;top:${(r/4)-1}px;left:-5px;width:${(r)+4}px;height:2px;"></div></div>`
-		d.body.appendChild(circle);
+		d.getElementById('content').appendChild(circle);
 		if (extra) {
-			extraBoxes.push(bodies.circle(x, y, r))
+			boxes.push(bodies.circle(x, y, r))
 		} else {
 			boxes.push(bodies.circle(x, y, r))
 		}
@@ -134,11 +137,38 @@ const phys = {
 				// noinspection JSCheckFunctionSignatures
 				Matter.Body.applyForce(obj[i], obj[i].position, { x: fx, y: fy });
 		}
+	},
+	resetSim: function () {
+		boxes = [];
+		boxProp = [];
+		d.getElementById('content').innerHTML = "";
+		composite.clear(engine.world, false);
+
+		for (let i = 0; i < columns; i++) {
+			for (let j = 0; j < rows; j++) {
+				phys.addCircle(i * 30 + 30, j * 30 + 30, 14);
+			}
+		}
+
+		phys.addBox(w.innerWidth / 2, w.innerHeight + 50, w.innerWidth, 100, 0.5, 1, "", true);
+		phys.addBox(w.innerWidth / 2, -50, w.innerWidth, 100, 0.5, 1, "", true);
+		phys.addBox(-50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
+		phys.addBox(w.innerWidth + 50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
+
+		composite.add(engine.world, boxes)
+		composite.add(engine.world, mouseConstraint);
 	}
 }
 
 d.addEventListener('DOMContentLoaded', () => {
+	const container = d.getElementById('content');
+	container.style.left = "0";
+	container.style.top = "0";
+	container.style.width = w.innerWidth + "px";
+	container.style.height = w.innerHeight + "px";
+	container.style.position = "absolute";
 	d.body.style.height = w.innerHeight + "px"; //i have NO IDEA why the body doesn't automatically fill the screen but this fixes it
+
 	for (let i = 0; i < 30; i++) {
 		for (let j = 0; j < 20; j++) {
 			phys.addCircle(i * 30 + 30, j * 30 + 30, 14);
@@ -150,6 +180,8 @@ d.addEventListener('DOMContentLoaded', () => {
 	phys.addBox(-50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
 	phys.addBox(w.innerWidth + 50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
 
+	phys.sliderSetup(1, 40, 1, 20, "rows", "Ball Rows", "20", "rows", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(1, 60, 1, 30, "columns", "Ball Columns", "30", "columns", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravY", "Y Axis Gravity", "1", "engine.world.gravity.y", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravX", "X Axis Gravity", "0", "engine.world.gravity.x", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(10, 2000, 1, 300, "expForce", "Explosion Force", "300", "expForce", "", d.getElementById("optionsSliders"), "");
@@ -158,7 +190,7 @@ d.addEventListener('DOMContentLoaded', () => {
 	composite.add(engine.world, boxes);
 
 	let mouse = Matter.Mouse.create(d.body);
-	let mouseConstraint = Matter.MouseConstraint.create(engine, {
+	mouseConstraint = Matter.MouseConstraint.create(engine, {
 		mouse: mouse,
 		constraint: {
 			stiffness: 0.2,
@@ -169,6 +201,10 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	let oldBoxMass;
 	(function run() {
+		if (oldR !== rows || oldC !== columns) {
+			phys.resetSim();
+		}
+
 		window.requestAnimationFrame(run);
 		Matter.Engine.update(engine, 1000 / 60);
 
@@ -196,17 +232,11 @@ d.addEventListener('DOMContentLoaded', () => {
 				// on LMB, cause an explosion, but don't allow it to happen every frame until the mouse is released ( it gets weird )
 				case 0:
 					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: false}, 4);
-					if (extraBoxes.length > 0) {
-						phys.enactForce(extraBoxes, exBoxProp, {x: explode.x, y: explode.y, rv: false});
-					}
 					explode.d = false;
 					break;
 				// on RMB, pull every object toward the mouse - until it is released
 				case 2:
 					phys.enactForce(boxes, boxProp, {x: explode.x, y: explode.y, rv: true}, 4, 0);
-					if (extraBoxes.length > 0) {
-						phys.enactForce(extraBoxes, exBoxProp, {x: explode.x, y: explode.y, rv: true});
-					}
 					break;
 			}
 		}
@@ -216,6 +246,8 @@ d.addEventListener('DOMContentLoaded', () => {
 		} else {
 			d.getElementById("options").style.display = "none";
 		}
+
+		oldR = rows; oldC = columns;
 	})();
 
 	w.addEventListener('mousedown', (e) => {
