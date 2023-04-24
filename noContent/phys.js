@@ -20,6 +20,9 @@ const runner = Matter.Runner.create();
 const composite = Matter.Composite;
 let showOptions = true;
 
+let radius = 14;
+let oldRadius = 14;
+
 /**
  * functions for helping with physics setup
  */
@@ -68,7 +71,7 @@ const phys = {
 		circle.style.left = x + 'px';
 		circle.style.top = y + 'px';
 		circle.style.borderRadius = r + 'px';
-		circle.innerHTML = `<div style="border-radius:${r}px;"><div style="position:relative;background-color:#fab387;top:${(r/4)-1}px;left:-5px;width:${(r)+4}px;height:2px;"></div></div>`
+		circle.innerHTML = `<div style="border-radius:${r}px;"></div>`
 		d.getElementById('content').appendChild(circle);
 		if (extra) {
 			boxes.push(bodies.circle(x, y, r));
@@ -153,7 +156,7 @@ const phys = {
 
 		for (let i = 0; i < columns; i++) {
 			for (let j = 0; j < rows; j++) {
-				phys.addCircle(i * 30 + 30, j * 30 + 30, 14);
+				phys.addCircle(i * ((radius*2)+2) + 30, j * ((radius*2)+2) + 30, radius);
 			}
 		}
 
@@ -178,7 +181,7 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	for (let i = 0; i < 30; i++) {
 		for (let j = 0; j < 20; j++) {
-			phys.addCircle(i * 30 + 30, j * 30 + 30, 14);
+			phys.addCircle(i * ((radius*2)+2) + 30, j * ((radius*2)+2) + 30, radius);
 		}
 	}
 
@@ -191,6 +194,7 @@ d.addEventListener('DOMContentLoaded', () => {
 	phys.sliderSetup(1, 60, 1, 30, "columns", "Ball Columns", "30", "columns", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravY", "Y Axis Gravity", "1", "engine.world.gravity.y", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravX", "X Axis Gravity", "0", "engine.world.gravity.x", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(10, 100, 1, 14, "radius", "Ball Radius", "14", "radius", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(0, 300, 1, 0, "centralGravity", "Central Gravity", "0", "centerGravity", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(10, 2000, 1, 300, "expForce", "Explosion Force", "300", "expForce", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(30, 1000, 1, 17, "boxMass", "Box Mass", "17", "boxMass", "", d.getElementById("optionsSliders"), "");
@@ -209,7 +213,7 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	let oldBoxMass;
 	(function run() {
-		if (oldR !== rows || oldC !== columns || oldW !== w.innerWidth || oldH !== w.innerHeight) {
+		if (oldR !== rows || oldC !== columns || oldW !== w.innerWidth || oldH !== w.innerHeight || oldRadius !== radius) {
 			phys.resetSim();
 		}
 
@@ -257,7 +261,7 @@ d.addEventListener('DOMContentLoaded', () => {
 			d.getElementById("options").style.display = "none";
 		}
 
-		oldR = rows; oldC = columns; oldW = w.innerWidth; oldH = w.innerHeight;
+		oldR = rows; oldC = columns; oldW = w.innerWidth; oldH = w.innerHeight; oldRadius = radius;
 	})();
 
 	w.addEventListener('mousedown', (e) => {
