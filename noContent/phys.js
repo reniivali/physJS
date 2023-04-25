@@ -5,7 +5,7 @@ const w = window;
 let boxes = [];
 let boxProp = [];
 let explode = {};
-let expForce = 200;
+let expForce = 40;
 let boxMass = 17;
 let columns = 30;
 let rows = 20;
@@ -181,7 +181,7 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	for (let i = 0; i < 30; i++) {
 		for (let j = 0; j < 20; j++) {
-			phys.addCircle(i * ((radius*2)+2) + 30, j * ((radius*2)+2) + 30, radius);
+			phys.addCircle(i * ((radius*2)+5) + 30, j * ((radius*2)+5) + 30, radius);
 		}
 	}
 
@@ -196,8 +196,8 @@ d.addEventListener('DOMContentLoaded', () => {
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravX", "X Axis Gravity", "0", "engine.world.gravity.x", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(10, 100, 1, 14, "radius", "Ball Radius", "14", "radius", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(0, 300, 1, 0, "centralGravity", "Central Gravity", "0", "centerGravity", "", d.getElementById("optionsSliders"), "");
-	phys.sliderSetup(10, 2000, 1, 300, "expForce", "Explosion Force", "300", "expForce", "", d.getElementById("optionsSliders"), "");
-	phys.sliderSetup(30, 1000, 1, 17, "boxMass", "Box Mass", "17", "boxMass", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(10, 2000, 1, 40, "expForce", "Explosion Force", "40", "expForce", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(5, 1000, 1, 17, "boxMass", "Box Mass", "17", "boxMass", "", d.getElementById("optionsSliders"), "");
 
 	composite.add(engine.world, boxes);
 
