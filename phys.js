@@ -8,6 +8,7 @@ let extraBoxes = [];
 let exBoxProp = [];
 let explode = false;
 let expForce = 500;
+let oldW = w.innerWidth, oldH = w.innerHeight;
 const engine = Matter.Engine.create();
 const bodies = Matter.Bodies;
 const runner = Matter.Runner.create();
@@ -15,6 +16,7 @@ const composite = Matter.Composite;
 let showOptions = true;
 let iFlexDemoBoxes = 4;
 let boxMass = 30;
+let mouseConstraint;
 
 /**
  * functions for the CSS dictionary elements
@@ -126,7 +128,7 @@ const phys = {
 		box.innerHTML = content;
 	
 		if (!stat) {
-			d.body.appendChild(box);
+			d.getElementById('content').appendChild(box);
 			boxes.push(bodies.rectangle(x, y, w, h))
 			Matter.Body.setMass(boxes[boxes.length - 1], m)
 			boxProp.push({w: w, h: h, m: m})
@@ -150,7 +152,7 @@ const phys = {
 		circle.style.top = y + 'px';
 		circle.style.borderRadius = r + 'px';
 		circle.innerHTML = `<div style="border-radius:${r}px;"><div style="position:relative;background-color:#fab387;top:${r-14}px;left:-5px;width:${r-10}px;height:8px;"></div></div>`
-		d.body.appendChild(circle);
+		d.getElementById('content').appendChild(circle);
 		if (extra) {
 			extraBoxes.push(bodies.circle(x, y, r))
 		} else {
@@ -220,6 +222,35 @@ const phys = {
 				// noinspection JSCheckFunctionSignatures
 				Matter.Body.applyForce(obj[i], obj[i].position, { x: fx, y: fy });
 		}
+	},
+	resetSim: function () {
+		boxes = [];
+		boxProp = [];
+		d.getElementById('content').innerHTML = "";
+		composite.clear(engine.world, false);
+
+		phys.addBox(1400, 150, 300, 310, 0.5, 30, "<div class=\"subSection\">\n<h1>Border Radius</h1>\n<div id=\"borderRadDemo\"></div>\n<p id=\"borderRadDemoVal\" style=\"margin-bottom: 0;\">Radius: 5px</p>\n<input type=\"range\" min=\"0\" max=\"100\" value=\"5\" class=\"slider\" id=\"borderRadDemoSlide\">\n</div>", false);
+		phys.addBox(1400, 450, 370, 425, 0.5, 30, "<div class=\"subSection\" id=\"boxShadowDemoContainer\">\n<h1>Box Shadow</h1>\n<div id=\"boxShadowDemo\"></div>\n<div id=\"boxShadowDemoSliders\"></div>\n</div>", false);
+		phys.addBox(510, 400, 1000, 625, 0.5, 30, "<div class=\"subSection\" style=\"overflow:auto;\">\n<h1>Flexbox</h1>\n<div id=\"flexDemoContainer\">\n<div class=\"demo flexDemo\">\n<h1>Box 1</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 2</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 3</h1>\n</div>\n<div class=\"demo flexDemo\">\n<h1>Box 4</h1>\n</div>\n</div>\n<h2 style=\"margin: 0;\">Container Properties</h2>\n<div class=\"flexContainer\">\n<div class=\"demo flexBox\" style=\"width: 300px;\">\n<h2>Direction</h2>\n<select id=\"flexDirection\">\n<option value=\"row\">Row</option>\n<option value=\"row-reverse\">Row Reverse</option>\n<option value=\"column\">Column</option>\n<option value=\"column-reverse\">Column Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\" style=\"width: 160px\">\n<h2>Wrap</h2>\n<select id=\"flexWrap\">\n<option value=\"nowrap\">No Wrap</option>\n<option value=\"wrap\">Wrap</option>\n<option value=\"wrap-reverse\">Wrap Reverse</option>\n</select>\n</div>\n<div class=\"demo flexBox\">\n<h2>Basis (all boxes)</h2>\n<button onclick=\"dict.unsetBasis()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Raw Width (all boxes)</h2>\n<button onclick=\"dict.unsetWidth()\">Unset</button>\n</div>\n<div class=\"demo flexBox\">\n<h2>Add / Remove Demo Boxes</h2>\n<button onclick=\"dict.addFlexDemoBox()\">Add Box</button>\n<button onclick=\"dict.removeFlexDemoBox()\">Remove Box</button>\n</div>\n</div>", false);
+		phys.addBox(1300, 150, 600, 600, 0.5, 30, `<div class="subSection" style="overflow-y: scroll;"><h1>Rotate, Transform</h1><div id="rotDemoContainer"><div id="rotateDemo"><div class="propDemo cf ff">front</div><div class="propDemo cf fl">left</div><div class="propDemo cf fr">right</div><div class="propDemo cf fba">back</div><div class="propDemo cf ft">top</div><div class="propDemo cf fbt">bottom</div></div></div><div id="rotateDemoSliders" class="demoSliders"></div></div>`, false)
+
+		phys.addCircle(100, 150, 75);
+		phys.addCircle(300, 150, 75);
+		phys.addCircle(500, 150, 75);
+		phys.addCircle(700, 150, 75);
+		phys.addCircle(900, 150, 75);
+		phys.addCircle(1100, 150, 75);
+		phys.addCircle(1300, 150, 75);
+		phys.addCircle(1500, 150, 75);
+		phys.addCircle(1700, 150, 75);
+
+		phys.addBox(w.innerWidth / 2, w.innerHeight + 50, w.innerWidth, 100, 0.5, 1, "", true);
+		phys.addBox(w.innerWidth / 2, -50, w.innerWidth, 100, 0.5, 1, "", true);
+		phys.addBox(-50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
+		phys.addBox(w.innerWidth + 50, w.innerHeight / 2, 100, w.innerHeight, 0.5, 1, "", true);
+
+		composite.add(engine.world, boxes)
+		composite.add(engine.world, mouseConstraint);
 	}
 }
 
@@ -253,7 +284,7 @@ d.addEventListener('DOMContentLoaded', () => {
 	composite.add(engine.world, boxes);
 
 	let mouse = Matter.Mouse.create(d.body);
-	let mouseConstraint = Matter.MouseConstraint.create(engine, {
+	mouseConstraint = Matter.MouseConstraint.create(engine, {
 		mouse: mouse,
 		constraint: {
 			stiffness: 0.2,
@@ -264,6 +295,10 @@ d.addEventListener('DOMContentLoaded', () => {
 
 	let oldBoxMass;
 	(function run() {
+		if (oldH !== w.innerHeight || oldW !== w.innerWidth) {
+			phys.resetSim();
+		}
+
 		window.requestAnimationFrame(run);
 		Matter.Engine.update(engine, 1000 / 60);
 
