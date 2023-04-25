@@ -12,6 +12,8 @@ let rows = 20;
 let oldR = 20, oldC = 30;
 let oldW = w.innerWidth, oldH = w.innerHeight;
 let centerGravity = 0;
+let boxProperties = [0, 0];
+let oldBoxProperties = [0, 0];
 let mouseConstraint;
 const engine = Matter.Engine.create();
 const body = Matter.Body;
@@ -198,6 +200,8 @@ d.addEventListener('DOMContentLoaded', () => {
 	phys.sliderSetup(0, 300, 1, 0, "centralGravity", "Central Gravity", "0", "centerGravity", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(10, 2000, 1, 40, "expForce", "Explosion Force", "40", "expForce", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(5, 1000, 1, 17, "boxMass", "Box Mass", "17", "boxMass", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(0, 1, 0.01, 0, "boxFriction", "Box Air Friction", "0", "boxProperties[0]", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(0, 1, 0.01, 0, "boxRestitution", "Box Restitution", "0", "boxProperties[1]", "", d.getElementById("optionsSliders"), "");
 
 	composite.add(engine.world, boxes);
 
@@ -215,6 +219,13 @@ d.addEventListener('DOMContentLoaded', () => {
 	(function run() {
 		if (oldR !== rows || oldC !== columns || oldW !== w.innerWidth || oldH !== w.innerHeight || oldRadius !== radius) {
 			phys.resetSim();
+		}
+
+		if (oldBoxProperties !== boxProperties) {
+			for (let i = 0; i < boxes.length - 4; i++) {
+				boxes[i].frictionAir = boxProperties[0];
+				boxes[i].restitution = boxProperties[1];
+			}
 		}
 
 		window.requestAnimationFrame(run);
@@ -261,7 +272,7 @@ d.addEventListener('DOMContentLoaded', () => {
 			d.getElementById("options").style.display = "none";
 		}
 
-		oldR = rows; oldC = columns; oldW = w.innerWidth; oldH = w.innerHeight; oldRadius = radius;
+		oldR = rows; oldC = columns; oldW = w.innerWidth; oldH = w.innerHeight; oldRadius = radius; oldBoxProperties = boxProperties;
 	})();
 
 	w.addEventListener('mousedown', (e) => {
