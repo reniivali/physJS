@@ -73,7 +73,11 @@ const phys = {
 		circle.style.left = x + 'px';
 		circle.style.top = y + 'px';
 		circle.style.borderRadius = r + 'px';
-		circle.innerHTML = `<div style="border-radius:${r}px;"></div>`
+		if (radius >= 10) {
+			circle.innerHTML = `<div style="border-radius:${r}px;"></div>`
+		} else {
+			circle.innerHTML = `<div style="border-radius:${r}px;margin:1px;padding:1px;width:${(r-2)*2}px;height:${(r-2)*2}px;"></div>`
+		}
 		d.getElementById('content').appendChild(circle);
 		if (extra) {
 			boxes.push(bodies.circle(x, y, r));
@@ -196,7 +200,7 @@ d.addEventListener('DOMContentLoaded', () => {
 	phys.sliderSetup(1, 60, 1, 30, "columns", "Ball Columns", "30", "columns", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravY", "Y Axis Gravity", "1", "engine.world.gravity.y", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(-10, 10, 0.01, 1, "gravX", "X Axis Gravity", "0", "engine.world.gravity.x", "", d.getElementById("optionsSliders"), "");
-	phys.sliderSetup(10, 100, 1, 14, "radius", "Ball Radius", "14", "radius", "", d.getElementById("optionsSliders"), "");
+	phys.sliderSetup(2, 100, 1, 14, "radius", "Ball Radius", "14", "radius", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(0, 300, 1, 0, "centralGravity", "Central Gravity", "0", "centerGravity", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(10, 2000, 1, 40, "expForce", "Explosion Force", "40", "expForce", "", d.getElementById("optionsSliders"), "");
 	phys.sliderSetup(5, 1000, 1, 17, "boxMass", "Box Mass", "17", "boxMass", "", d.getElementById("optionsSliders"), "");
